@@ -3,32 +3,74 @@ package com.adaptionsoft.games.uglytrivia;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import com.adaptionsoft.games.uglytrivia.Game.Questions;
+
 public class Game {
-    ArrayList players = new ArrayList();
+
+	public static class Questions {
+
+		public LinkedList popQuestions = new LinkedList();
+		private Question question;
+
+		public Questions(Question question) {
+			this.question = question;
+		}
+
+		protected void addQuestion(int questionNumber) {
+			popQuestions.addLast(getQuestionPrefix() + questionNumber);
+		}
+
+		protected String getQuestionPrefix() {
+			return question.getPrefix();
+		}
+
+		public void addQuestions(int numberOfQuestions) {
+			for (int i = 0; i < numberOfQuestions; i++)
+				addQuestion(i);
+			
+		}
+
+		public Object removeFirst() {
+			return popQuestions.removeFirst();
+		}
+	}
+
+	static enum Question {
+		POP("Pop Question "),
+		SCIENCE("Science Question "),
+		SPORT("Sports Question "),
+		ROCK("Rock Question ");
+		
+		private final String questionPrefix;
+
+		private Question(String questionPrefix) {
+			this.questionPrefix = questionPrefix;
+		}
+
+		public String getPrefix() {
+			return questionPrefix;
+		}
+	}
+
+	ArrayList players = new ArrayList();
     int[] places = new int[6];
     int[] purses  = new int[6];
     boolean[] inPenaltyBox  = new boolean[6];
     
-    LinkedList popQuestions = new LinkedList();
-    LinkedList scienceQuestions = new LinkedList();
-    LinkedList sportsQuestions = new LinkedList();
-    LinkedList rockQuestions = new LinkedList();
+    Questions popQuestions = new Questions(Question.POP);
+	Questions scienceQuestions = new Questions(Question.SCIENCE);
+	Questions sportsQuestions = new Questions(Question.SPORT);
+    Questions rockQuestions = new Questions(Question.ROCK);
     
     int currentPlayer = 0;
     boolean isGettingOutOfPenaltyBox;
     
     public  Game(){
-    	for (int i = 0; i < 50; i++) {
-			popQuestions.addLast("Pop Question " + i);
-			scienceQuestions.addLast(("Science Question " + i));
-			sportsQuestions.addLast(("Sports Question " + i));
-			rockQuestions.addLast(createRockQuestion(i));
-    	}
+    	popQuestions.addQuestions(50);
+    	scienceQuestions.addQuestions(50);
+    	sportsQuestions.addQuestions(50);
+    	rockQuestions.addQuestions(50);
     }
-
-	public String createRockQuestion(int index){
-		return "Rock Question " + index;
-	}
 	
 	public boolean isPlayable() {
 		return (howManyPlayers() >= 2);
